@@ -9,7 +9,11 @@
     if(!empty($_POST)){
 
     }
-    $sql = 'SELECT * FROM areas';
+    // .=を使用することで，変数が上書きされず，文字連結として扱われる．
+    $sql = 'SELECT `areas`.`area_id`, `areas`.`area_name`, COUNT(`friends`.`friend_id`) AS';
+    $sql .= 'friends_cnt FROM `areas` LEFT JOIN `friends` ON `areas`.`area_id` = `friends`.`area_id`';
+    $sql .= 'GROUP BY `areas`.`area_id`';
+
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 
