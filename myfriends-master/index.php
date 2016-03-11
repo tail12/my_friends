@@ -11,8 +11,9 @@
     }
     // .=を使用することで，変数が上書きされず，文字連結として扱われる．
     $sql = 'SELECT `areas`.`area_id`, `areas`.`area_name`, COUNT(`friends`.`friend_id`) AS';
-    $sql .= 'friends_cnt FROM `areas` LEFT JOIN `friends` ON `areas`.`area_id` = `friends`.`area_id`';
-    $sql .= 'GROUP BY `areas`.`area_id`';
+    $sql .= ' friends_cnt FROM `areas` LEFT JOIN `friends` ON `areas`.`area_id` = `friends`.`area_id`';
+    $sql .= ' GROUP BY `areas`.`area_id`';
+    // friends_cntとして取り出す．
 
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
@@ -30,7 +31,6 @@
       # データを用意しておいた配列に格納
       $areas[] = $rec;
     }
-
 ?>
 
 
@@ -58,7 +58,6 @@
     <![endif]-->
   </head>
   <body>
-
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -69,7 +68,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.php"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
+                <a class="navbar-brand" href="index.html"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -81,32 +80,32 @@
         <!-- /.container-fluid -->
     </nav>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4 content-margin-top">
-      <legend>都道府県一覧</legend>
-        <table class="table table-striped table-bordered table-hover table-condensed">
-          <thead>
-            <tr>
-              <th><div class="text-center">id</div></th>
-              <th><div class="text-center">県名</div></th>
-              <th><div class="text-center">人数</div></th>
-            </tr>
-          </thead>
-          <?php foreach ($areas as $area): ?>
-          <tbody>
-            <!-- id, 県名を表示 -->
-            <tr>
-              <td><div class="text-center"><?php echo $area['area_id']; ?></div></td>
-              <td><div class="text-center"><a href="show.php?area_id=<?php echo $area['area_id']; ?>"><?php echo $area['area_name'] ?></a></div></td>
-              <td><div class="text-center">3</div></td>
-            </tr>
-          </tbody>
-        <?php endforeach; ?>
-        </table>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 content-margin-top">
+        <legend>都道府県一覧</legend>
+          <table class="table table-striped table-bordered table-hover table-condensed">
+            <thead>
+              <tr>
+                <th><div class="text-center">id</div></th>
+                <th><div class="text-center">県名</div></th>
+                <th><div class="text-center">人数</div></th>
+              </tr>
+            </thead>
+            <?php foreach ($areas as $area): ?>
+            <tbody>
+              <!-- id, 県名を表示 -->
+              <tr>
+                <td><div class="text-center"><?php echo $area['area_id']; ?></div></td>
+                <td><div class="text-center"><a href="show.php?area_id=<?php echo $area['area_id']; ?>"><?php echo $area['area_name'] ?></a></div></td>
+                <td><div class="text-center"><?php  echo $area['friends_cnt']; ?></div></td>
+              </tr>
+            </tbody>
+          <?php endforeach; ?>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
