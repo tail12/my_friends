@@ -97,7 +97,7 @@
             男性平均: <?php echo number_format(0, 2); ?>歳　女性平均: <?php number_format(0, 2); ?>歳
         <?php elseif($avg_male == NULL && $avg_female != NULL): ?>
             男性平均: <?php echo number_format(0, 2); ?>歳　女性平均: <?php echo number_format($avg_female, 2); ?>歳
-          <?php elseif($avg_male != NULL && $avg_female == NULL): ?>
+        <?php elseif($avg_male != NULL && $avg_female == NULL): ?>
             男性平均: <?php echo number_format($avg_male, 2); ?>歳　女性平均: <?php echo number_format(0, 2); ?>歳
         <?php endif; ?>
       </div>
