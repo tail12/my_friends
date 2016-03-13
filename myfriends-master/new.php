@@ -10,7 +10,7 @@
         // INSERT文
         $sql = sprintf(
         "INSERT INTO `friends`(`friend_id`, `friend_name`, `area_id`, `gender`, `age`, `created`)
-        VALUES ('NULL', '%s', '%s', '%s', '%s', 'now();')",
+        VALUES ('NULL', '%s', '%s', '%s', '%s', 'NOW();')",
         $_POST['name'], $_POST['area_id'], $_POST['gender'],$_POST['age']);
 
         $stmt = $dbh->prepare($sql);
@@ -25,9 +25,7 @@
       $rec = $stmt->fetch(PDO::FETCH_ASSOC);
       if($rec == false) break;
       $areas[] = $rec;
-      // echo $rec['area_name'];
     }
-    //var_dump($areas);
 ?>
 
 <!DOCTYPE html>
@@ -74,8 +72,8 @@
                 <select class="form-control" name="area_id">
                   <option value="0">出身地を選択</option>
                   <?php
-                      for ($i=0; $i <= count($areas) ; $i++) {
-                          echo '<option value="'.($i+1).'">'.$areas[$i].'</option>';
+                      foreach ($areas as $area) {
+                          echo '<option value="'.$area['area_id'].'">'.$area['area_name'].'</option>';
                       }
                   ?>
 

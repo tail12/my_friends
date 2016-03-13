@@ -13,8 +13,8 @@
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 
-    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
     $area_name = $rec['area_name'];
 
     // 友達リストを表示するためのSQL文
@@ -34,10 +34,29 @@
 
       // データ格納
       $friends[] = $rec;
-
+      # 数を1ずつ加算していく．
       if($rec['gender'] == 1) $male++;
       else $female++;
     }
+
+    # AVG文の実装部分(male)
+    $sql = sprintf("SELECT AVG(`age`) FROM `friends` WHERE `area_id`=%d AND `gender`=%d", $_GET['area_id'], 1);
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $avg_male = array();
+    $avg_male = $rec['AVG(`age`)'];
+
+    # AVG実装部分(female)
+    $sql = sprintf("SELECT AVG(`age`) FROM `friends` WHERE `area_id`=%d AND `gender`=%d", $_GET['area_id'], 2);
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $avg_female = array();
+    $avg_female = $rec['AVG(`age`)'];
+
 ?>
 
 
@@ -72,7 +91,16 @@
     <div class="row">
       <div class="col-md-4 content-margin-top">
       <legend><?php echo $area_name; ?>の友達</legend>
-      <div class="well">男性: <?php echo $male ?>名　女性： <?php echo $female ?>名</div>
+      <div class="well">
+        男性: <?php echo $male; ?>名　女性： <?php echo $female; ?>名 <br>
+        <?php if ($avg_male == NULL && $avg_female == NULL): ?>
+            男性平均: <?php echo number_format(0, 2); ?>歳　女性平均: <?php number_format(0, 2); ?>歳
+        <?php elseif($avg_male == NULL && $avg_female != NULL): ?>
+            男性平均: <?php echo number_format(0, 2); ?>歳　女性平均: <?php echo number_format($avg_female, 2); ?>歳
+          <?php elseif($avg_male != NULL && $avg_female == NULL): ?>
+            男性平均: <?php echo number_format($avg_male, 2); ?>歳　女性平均: <?php echo number_format(0, 2); ?>歳
+        <?php endif; ?>
+      </div>
         <table class="table table-striped table-hover table-condensed">
           <thead>
             <tr>
@@ -87,7 +115,7 @@
                 <td><div class="text-center"><?php echo $friend['friend_name']; ?></div></td>
                 <td>
                   <div class="text-center">
-                    <a href="edit.php"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="edit.php?friend_id=<?php echo $friend['friend_id'] ?>"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
                   </div>
                 </td>
