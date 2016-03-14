@@ -1,47 +1,56 @@
 <?php
-    define('PDO_DNS', 'mysql:dbname=myfriends;host=localhost');
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', '');
-    #var_dump($_GET);
+# DB接続準備
+$dsn = 'mysql:dbname=myfriends;host=localhost';
+$user = 'root';
+$password = '';
+$dbh = new PDO($dsn,$user,$password);
+$dbh->query('SET NAMES utf8');
 
-    $dbh = new PDO(PDO_DNS, DB_USERNAME, DB_PASSWORD);
-    $dbh->query('SET NAMES utf8');
+$friend_id = $_GET['friend_id'];
 
-    # if(!empty($_GET) && isset($_GET)){
-      $sql = sprintf("SELECT * FROM `friends` WHERE friend_id='%s'", $_GET['friend_id']);
-      $stmt = $dbh->prepare($sql);
-      $stmt->execute();
-      $friend = $stmt->fetch(PDO::FETCH_ASSOC);
-    # }
-    echo "<pre>";
-    var_dump($friend);
-    echo "</pre>";
+$sql ='SELECT * FROM `friends` WHERE `friend_id` = ' . $friend_id;
 
-    # HW：ここをUpdate文の実行に変更しましょう
-    # POST 送信された情報を取得
-    # POST送信されたら、友達データを追加
-    if(isset($_POST) && !empty($_POST)){
-      var_dump($_POST);
-      $sql = sprintf("UPDATE `friends` SET `friend_name`='%s',`area_id`=%d,`gender`=%d,`age`=%d WHERE `friend_id` = %s",
-            $_POST['name'], $_POST['area_id'], $_POST['gender'], $_POST['age'], $_GET['friend_id']);
-      # SQL実行
-      $stmt = $dbh->prepare($sql);
-      $stmt->execute();
-      var_dump($friend['friend_id']);
-    }
+# SQL実行
+$stmt = $dbh->prepare($sql);
+$stmt->execute();
 
-    $sql = 'SELECT * FROM `areas`';
-    $areas = array();
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute();
+$friends = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    while (1) {
-        $rec = $stmt->fetch(PDO::FETCH_ASSOC);
-        if($rec == false) break;
-        $areas[] = $rec;
-    }
+# セレクトボックスの都道府県
+$sql = 'SELECT * FROM `areas` WHERE 1';
+
+# SQL実行
+$stmt = $dbh->prepare($sql);
+$stmt->execute();
+
+$areas = array();
+
+while(1){
+  # データ取得
+  $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+  if($rec == false){
+    break;
+  }
+  # データ格納
+  $areas[]=$rec;
+}
+
+# データの更新処理
+$friend_id = $_GET['friend_id'];
+if (isset($_POST) && !empty($_POST)) {
+  $sql = 'UPDATE `friends` SET
+  `friend_name`="'.$_POST['friend_name'].'",`area_id`='.$_POST['area_id'].',`gender`='.$_POST['gender'].',`age`='.$_POST['age'].' WHERE `friend_id` = ' . $friend_id;
+
+  # SQL実行
+  $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+
+  # 更新処理が完了後、index.phpへ遷移
+  header('Location: index.php');
+}
 
 
+$dbh = null;
 ?>
 
 <!DOCTYPE html>
@@ -68,18 +77,38 @@
     <![endif]-->
   </head>
   <body>
-
+  <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header page-scroll">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="index.php"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav navbar-right">
+              </ul>
+          </div>
+          <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+  </nav>
 
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
         <legend>友達の編集</legend>
-        <form method="post" action="" class="form-horizontal" role="form">
+        <form method="post" action="edit.php?friend_id=<?php echo $friends['friend_id'] ?>" class="form-horizontal" role="form">
             <!-- 名前 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">名前</label>
               <div class="col-sm-10">
-                <input type="text" name="name" class="form-control" placeholder="<?php  ?>" value="<?php echo $friend['friend_name']; ?>">
+                <input type="text" name="friend_name" class="form-control" placeholder="山田　太郎" value="<?php echo $friends['friend_name']; ?>">
               </div>
             </div>
             <!-- 出身 -->
@@ -88,14 +117,13 @@
               <div class="col-sm-10">
                 <select class="form-control" name="area_id">
                   <option value="0">出身地を選択</option>
-                  <?php
-                    foreach ($areas as $area) { ?>
-                      <?php if ($area['area_id'] == $friend['area_id']) { ?>
-                      <option value="<?php echo $area['area_id']; ?>" selected><?php echo $area['area_name']; ?></option>
-                      <?php }else{ ?>
-                      <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
-                      <?php } ?>
-                  <?php } ?>
+              <?php foreach ($areas as $area) { ?>
+              <?php if ($area['area_id'] == $friends['area_id']) { ?>
+                  <option value="<?php echo $area['area_id']; ?>" selected><?php echo $area['area_name']; ?></option>
+              <?php } else{ ?>
+                  <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
+              <?php } ?>
+              <?php } ?>
                 </select>
               </div>
             </div>
@@ -104,14 +132,14 @@
               <label class="col-sm-2 control-label">性別</label>
               <div class="col-sm-10">
                 <select class="form-control" name="gender">
-                  <?php
-                      if($friend['gender'] == 1){ ?>
-                        <option value="1" selected>男性</option>
-                        <option value="2">女性</option>
-                  <?php }else{ ?>
-                      <option value="1">男性</option>
-                      <option value="2" selected>女性</option>
-                  <?php } ?>>
+                  <option value="0">性別を選択</option>
+                  <?php if($friends['gender'] == 1){ ?>
+                  <option value="1" selected>男性</option>
+                  <option value="2">女性</option>
+                  <?php } else { ?>
+                  <option value="1">男性</option>
+                  <option value="2" selected>女性</option>
+                  <?php } ?>
                 </select>
               </div>
             </div>
@@ -119,11 +147,11 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">年齢</label>
               <div class="col-sm-10">
-                <input type="text" name="age" class="form-control" placeholder="例：27" value="<?php echo $friend['age']; ?>">
+                <input type="text" name="age" class="form-control" placeholder="例：27" value="<?php echo $friends['age']; ?>">
               </div>
             </div>
 
-          <input type="submit" class="btn btn-default" value="更新" onclick="location.href=''" >
+          <input type="submit" class="btn btn-default" value="更新">
         </form>
       </div>
 
