@@ -31,21 +31,20 @@ while(1){
   if($rec == false){
     break;
   }
-  # データ格納
   $areas[]=$rec;
 }
 
 # データの更新処理
 $friend_id = $_GET['friend_id'];
 if (isset($_POST) && !empty($_POST)) {
-  $sql = 'UPDATE `friends` SET
-  `friend_name`="'.$_POST['friend_name'].'",`area_id`='.$_POST['area_id'].',`gender`='.$_POST['gender'].',`age`='.$_POST['age'].' WHERE `friend_id` = ' . $friend_id;
+  $sql = sprintf("UPDATE `friends` SET `friend_name`='%s',`area_id`=%d,`gender`=%d,`age`=%d WHERE `friend_id` = %s",
+        $_POST['friend_name'], $_POST['area_id'], $_POST['gender'], $_POST['age'], $_GET['friend_id']);
 
   # SQL実行
   $stmt = $dbh->prepare($sql);
   $stmt->execute();
 
-  # 更新処理が完了後、index.phpへ遷移
+  # 更新処理が完了後、index.phpへ移動する
   header('Location: index.php');
 }
 
@@ -77,27 +76,7 @@ $dbh = null;
     <![endif]-->
   </head>
   <body>
-  <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-          <!-- Brand and toggle get grouped for better mobile display -->
-          <div class="navbar-header page-scroll">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="index.php"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
-          </div>
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav navbar-right">
-              </ul>
-          </div>
-          <!-- /.navbar-collapse -->
-      </div>
-      <!-- /.container-fluid -->
-  </nav>
+
 
   <div class="container">
     <div class="row">
@@ -118,11 +97,11 @@ $dbh = null;
                 <select class="form-control" name="area_id">
                   <option value="0">出身地を選択</option>
               <?php foreach ($areas as $area) { ?>
-              <?php if ($area['area_id'] == $friends['area_id']) { ?>
-                  <option value="<?php echo $area['area_id']; ?>" selected><?php echo $area['area_name']; ?></option>
-              <?php } else{ ?>
-                  <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
-              <?php } ?>
+                <?php if ($area['area_id'] == $friends['area_id']) { ?>
+                    <option value="<?php echo $area['area_id']; ?>" selected><?php echo $area['area_name']; ?></option>
+                <?php } else{ ?>
+                    <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
+                <?php } ?>
               <?php } ?>
                 </select>
               </div>
