@@ -23,11 +23,14 @@
     if(isset($_POST) && !empty($_POST)){
       # var_dump($_POST);
       $sql = sprintf("UPDATE `friends` SET `friend_name`='%s',`area_id`=%d,`gender`=%d,`age`=%d WHERE `friend_id` = %s",
-            $_POST['name'], $_POST['area_id'], $_POST['gender'], $_POST['age'], $_GET['friend_id']);
+            $_POST['friend_name'], $_POST['area_id'], $_POST['gender'], $_POST['age'], $_GET['friend_id']);
       # SQL実行
       $stmt = $dbh->prepare($sql);
       $stmt->execute();
       # var_dump($friend['friend_id']);
+
+      # ページを遷移させる
+      header('Location: index.php');
     }
 
     $sql = 'SELECT * FROM `areas`';
