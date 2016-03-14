@@ -2,29 +2,29 @@
     define('PDO_DNS', 'mysql:dbname=myfriends;host=localhost');
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', '');
-    //var_dump($_GET);
+    #var_dump($_GET);
 
     $dbh = new PDO(PDO_DNS, DB_USERNAME, DB_PASSWORD);
     $dbh->query('SET NAMES utf8');
 
-//    if(!empty($_GET) && isset($_GET)){
+    # if(!empty($_GET) && isset($_GET)){
       $sql = sprintf("SELECT * FROM `friends` WHERE friend_id='%s'", $_GET['friend_id']);
       $stmt = $dbh->prepare($sql);
       $stmt->execute();
       $friend = $stmt->fetch(PDO::FETCH_ASSOC);
-  //  }
+    # }
     echo "<pre>";
     var_dump($friend);
     echo "</pre>";
 
-    // HW：ここをUpdate文の実行に変更しましょう
-    // POST 送信された情報を取得
-    // POST送信されたら、友達データを追加
+    # HW：ここをUpdate文の実行に変更しましょう
+    # POST 送信された情報を取得
+    # POST送信されたら、友達データを追加
     if(isset($_POST) && !empty($_POST)){
       var_dump($_POST);
       $sql = sprintf("UPDATE `friends` SET `friend_name`='%s',`area_id`=%d,`gender`=%d,`age`=%d WHERE `friend_id` = %s",
             $_POST['name'], $_POST['area_id'], $_POST['gender'], $_POST['age'], $_GET['friend_id']);
-      //SQL実行
+      # SQL実行
       $stmt = $dbh->prepare($sql);
       $stmt->execute();
       var_dump($friend['friend_id']);
@@ -61,10 +61,10 @@
     <link href="assets/css/main.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:# -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="https:#oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https:#oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
   <body>
@@ -128,7 +128,7 @@
       </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https:#ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>

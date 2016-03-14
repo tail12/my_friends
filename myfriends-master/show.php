@@ -1,5 +1,5 @@
 <?php
-    //  echo $_GET['area_id'];
+    #  echo $_GET['area_id'];
     define('PDO_DNS', 'mysql:dbname=myfriends;host=localhost');
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', '');
@@ -9,7 +9,7 @@
 
 
     $sql = sprintf('SELECT * FROM areas WHERE area_id = %s', $_GET['area_id']);
-//    $sql = 'SELECT * FROM areas WHERE id = '.$_GET['area_id'];
+    # $sql = 'SELECT * FROM areas WHERE id = '.$_GET['area_id'];
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 
@@ -17,14 +17,14 @@
     $rec = $stmt->fetch(PDO::FETCH_ASSOC);
     $area_name = $rec['area_name'];
 
-    // 友達リストを表示するためのSQL文
+    # 友達リストを表示するためのSQL文
     $sql = sprintf('SELECT * FROM `friends` WHERE `area_id` = %d', $_GET['area_id']);
-    // SQL文の実行
+    # SQL文の実行
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
-    // 取得データ格納用Array
+    # 取得データ格納用Array
     $friends = array();
-    // 男女カウント用変数
+    # 男女カウント用変数
     $male = 0;
     $female = 0;
 
@@ -32,7 +32,7 @@
       $rec = $stmt->fetch(PDO::FETCH_ASSOC);
       if($rec == false) break;
 
-      // データ格納
+      # データ格納
       $friends[] = $rec;
       # 数を1ずつ加算していく．
       if($rec['gender'] == 1) $male++;
@@ -77,10 +77,10 @@
     <link href="assets/css/main.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:# -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="https:#oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https:#oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
   </head>
@@ -132,7 +132,7 @@
   </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https:#ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>
